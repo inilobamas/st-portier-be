@@ -13,7 +13,6 @@ func InitRoutes() *gin.Engine {
 
 	// Authentication
 	r.POST("/login", controllers.Login)
-	r.POST("/register", controllers.Register)
 
 	authorized := r.Group("/")
 	authorized.Use(middleware.AuthMiddleware())
@@ -30,7 +29,6 @@ func InitRoutes() *gin.Engine {
 		authorized.POST("/companies", middleware.RequireRole(models.SuperAdminRoleID), controllers.CreateCompany)
 		authorized.GET("/companies/:id", middleware.RequireRole(models.SuperAdminRoleID, models.AdminRoleID, models.NormalUserRoleID), controllers.GetCompany)
 		authorized.GET("/companies", middleware.RequireRole(models.SuperAdminRoleID), controllers.GetCompanies)
-		authorized.GET("/companies/:company_id/buildings", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID, models.SuperAdminRoleID), controllers.GetBuildingsByCompany)
 		authorized.PUT("/companies/:id", middleware.RequireRole(models.SuperAdminRoleID, models.AdminRoleID), controllers.UpdateCompany)
 		authorized.DELETE("/companies/:id", middleware.RequireRole(models.SuperAdminRoleID), controllers.DeleteCompany)
 
@@ -38,7 +36,7 @@ func InitRoutes() *gin.Engine {
 		authorized.POST("/buildings", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.CreateBuilding)
 		authorized.GET("/buildings/:id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID), controllers.GetBuilding)
 		authorized.GET("/buildings", middleware.RequireRole(models.SuperAdminRoleID), controllers.GetAllBuildings)
-		authorized.GET("/buildings/:building_id/floors", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID, models.SuperAdminRoleID), controllers.GetFloorsByBuildingID)
+		authorized.GET("/buildings/company/:company_id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID, models.SuperAdminRoleID), controllers.GetBuildingsByCompany)
 		authorized.PUT("/buildings/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateBuilding)
 		authorized.DELETE("/buildings/:id", middleware.RequireRole(models.SuperAdminRoleID), controllers.DeleteBuilding)
 
@@ -46,7 +44,7 @@ func InitRoutes() *gin.Engine {
 		authorized.POST("/floors", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.CreateFloor)
 		authorized.GET("/floors/:id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID), controllers.GetFloor)
 		authorized.GET("/floors", middleware.RequireRole(models.SuperAdminRoleID), controllers.GetAllFloors)
-		authorized.GET("/floors/:floor_id/rooms", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID, models.SuperAdminRoleID), controllers.GetRoomsByFloorID)
+		authorized.GET("/floors/building/:building_id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID, models.SuperAdminRoleID), controllers.GetFloorsByBuildingID)
 		authorized.PUT("/floors/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateFloor)
 		authorized.DELETE("/floors/:id", middleware.RequireRole(models.SuperAdminRoleID), controllers.DeleteFloor)
 
@@ -54,7 +52,7 @@ func InitRoutes() *gin.Engine {
 		authorized.POST("/rooms", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.CreateRoom)
 		authorized.GET("/rooms/:id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID), controllers.GetRoom)
 		authorized.GET("/rooms", middleware.RequireRole(models.SuperAdminRoleID), controllers.GetAllRooms)
-		authorized.GET("/rooms/:room_id/locks", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID, models.SuperAdminRoleID), controllers.GetRoomsByFloorID)
+		authorized.GET("/rooms/floor/:floor_id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID, models.SuperAdminRoleID), controllers.GetRoomsByFloorID)
 		authorized.PUT("/rooms/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateRoom)
 		authorized.DELETE("/rooms/:id", middleware.RequireRole(models.SuperAdminRoleID), controllers.DeleteRoom)
 
@@ -62,7 +60,7 @@ func InitRoutes() *gin.Engine {
 		authorized.POST("/locks", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.CreateLock)
 		authorized.GET("/locks/:id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID), controllers.GetLock)
 		authorized.GET("/locks", middleware.RequireRole(models.SuperAdminRoleID), controllers.GetAllLocks)
-		authorized.GET("/locks/:lock_id/key_copies", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID, models.SuperAdminRoleID), controllers.GetKeyCopiesByLockID)
+		authorized.GET("/locks/room/:room_id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID, models.SuperAdminRoleID), controllers.GetRoomsByFloorID)
 		authorized.PUT("/locks/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateLock)
 		authorized.DELETE("/locks/:id", middleware.RequireRole(models.SuperAdminRoleID), controllers.DeleteLock)
 
@@ -70,6 +68,7 @@ func InitRoutes() *gin.Engine {
 		authorized.POST("/key_copies", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.CreateKeyCopy)
 		authorized.GET("/key_copies/:id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID), controllers.GetKeyCopy)
 		authorized.GET("/key_copies", middleware.RequireRole(models.SuperAdminRoleID), controllers.GetAllKeyCopies)
+		authorized.GET("/key_copies/lock/:lock_id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID, models.SuperAdminRoleID), controllers.GetKeyCopiesByLockID)
 		authorized.PUT("/key_copies/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateKeyCopy)
 		authorized.DELETE("/key_copies/:id", middleware.RequireRole(models.SuperAdminRoleID), controllers.DeleteKeyCopy)
 
@@ -81,9 +80,9 @@ func InitRoutes() *gin.Engine {
 		authorized.DELETE("/employees/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.DeleteEmployee)
 
 		// Key Copy Assignment routes #TODO: by Company ID
-		authorized.POST("/employees/:employee_id/key-copies/:key_copy_id/assign", middleware.RequireRole(models.NormalUserRoleID, models.AdminRoleID, models.SuperAdminRoleID), controllers.AssignKeyCopy)
-		authorized.POST("/employees/:employee_id/key-copies/:key_copy_id/revoke", middleware.RequireRole(models.NormalUserRoleID, models.AdminRoleID, models.SuperAdminRoleID), controllers.RevokeKeyCopy)
-		authorized.GET("/employees/:employee_id/key-copies", middleware.RequireRole(models.NormalUserRoleID, models.AdminRoleID, models.SuperAdminRoleID), controllers.GetAssignedKeys)
+		authorized.POST("/employees/assign/:employee_id/:key_copy_id", middleware.RequireRole(models.NormalUserRoleID, models.AdminRoleID, models.SuperAdminRoleID), controllers.AssignKeyCopy)
+		authorized.POST("/employees/revoke/:employee_id/:key_copy_id", middleware.RequireRole(models.NormalUserRoleID, models.AdminRoleID, models.SuperAdminRoleID), controllers.RevokeKeyCopy)
+		authorized.GET("/employees/key-copies/:employee_id", middleware.RequireRole(models.NormalUserRoleID, models.AdminRoleID, models.SuperAdminRoleID), controllers.GetAssignedKeys)
 	}
 
 	return r

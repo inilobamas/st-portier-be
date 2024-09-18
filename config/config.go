@@ -9,6 +9,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var DB *gorm.DB
@@ -38,6 +39,7 @@ func InitDB() {
 	db.AutoMigrate(&models.User{}, &models.Company{}, &models.Role{})
 
 	seedRoles(db) // Seed roles
+	seedSuperAdmin(db)
 }
 
 func InitJWTSecret() string {
@@ -56,4 +58,36 @@ func seedRoles(db *gorm.DB) {
 			db.Create(&role)
 		}
 	}
+}
+
+// seedSuperAdmin creates a default Super Admin user if it doesn't exist #TODO: Change data into ENV
+func seedSuperAdmin(db *gorm.DB) {
+	var user models.User
+
+	// Check if a Super Admin user already exists
+	if err := db.Where("role_id = ?", models.SuperAdminRoleID).First(&user).Error; err == nil {
+		log.Println("Super Admin already exists.")
+		return
+	}
+
+	// Create a new Super Admin user
+	password := "superadminpassword" // Change this to a secure password or load from .env
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatalf("Failed to hash password: %v", err)
+	}
+
+	superAdmin := models.User{
+		Username:  "superadmin",
+		Password:  string(hashedPassword),
+		RoleID:    models.SuperAdminRoleID,
+		CompanyID: 0, // Super Admin can be outside of specific company context
+	}
+
+	// Insert Super Admin user into the database
+	if err := db.Create(&superAdmin).Error; err != nil {
+		log.Fatalf("Failed to create Super Admin user: %v", err)
+	}
+
+	log.Println("Super Admin user created successfully!")
 }
