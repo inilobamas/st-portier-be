@@ -1,0 +1,46 @@
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Output of the build process
+build/
+bin/
+*.out
+
+# Test binary, build and coverage files
+*.test
+*.cover
+
+# Go workspace file
+go.work
+
+# Dependency directories (vendor/)
+vendor/
+
+# Environment variables
+.env
+
+# IDE and editor-specific files
+.idea/
+.vscode/
+*.swp
+
+# macOS file system files
+.DS_Store
+
+# Log files
+*.log
+
+# Coverage files
+*.cov
+coverage.out
+
+# Compiled object files and binary artifacts
+*.o
+*.a
+*.so
+
+# Dependency files
+go.sum
