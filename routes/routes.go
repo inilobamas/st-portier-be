@@ -73,12 +73,17 @@ func InitRoutes() *gin.Engine {
 		authorized.PUT("/key_copies/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateKeyCopy)
 		authorized.DELETE("/key_copies/:id", middleware.RequireRole(models.SuperAdminRoleID), controllers.DeleteKeyCopy)
 
-		// Employee CRUD routes
+		// Employee CRUD routes #TODO: Get Employee by Company ID
 		authorized.POST("/employees", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.CreateEmployee)
 		authorized.GET("/employees", middleware.RequireRole(models.AdminRoleID), controllers.GetAllEmployeesByCompany)
 		authorized.GET("/employees/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.GetEmployeeByID)
 		authorized.PUT("/employees/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateEmployee)
 		authorized.DELETE("/employees/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.DeleteEmployee)
+
+		// Key Copy Assignment routes #TODO: by Company ID
+		authorized.POST("/employees/:employee_id/key-copies/:key_copy_id/assign", middleware.RequireRole(models.NormalUserRoleID, models.AdminRoleID, models.SuperAdminRoleID), controllers.AssignKeyCopy)
+		authorized.POST("/employees/:employee_id/key-copies/:key_copy_id/revoke", middleware.RequireRole(models.NormalUserRoleID, models.AdminRoleID, models.SuperAdminRoleID), controllers.RevokeKeyCopy)
+		authorized.GET("/employees/:employee_id/key-copies", middleware.RequireRole(models.NormalUserRoleID, models.AdminRoleID, models.SuperAdminRoleID), controllers.GetAssignedKeys)
 	}
 
 	return r
