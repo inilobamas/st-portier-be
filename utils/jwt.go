@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -8,6 +9,7 @@ import (
 )
 
 func GenerateToken(userId uint) (string, error) {
+	fmt.Println("masuk", userId)
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["authorized"] = true

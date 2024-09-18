@@ -7,7 +7,7 @@ import (
 
 func main() {
 	config.InitDB()
-	defer config.DB.Close()
+	defer config.CloseDB()
 
 	r := routes.InitRoutes()
 	r.Run(":8080")

@@ -36,10 +36,19 @@ func InitDB() {
 		log.Fatalf("Error connecting to the database: %v", err)
 	}
 
-	db.AutoMigrate(&models.User{}, &models.Company{}, &models.Role{})
+	DB = db
 
-	seedRoles(db) // Seed roles
-	seedSuperAdmin(db)
+	DB.AutoMigrate(&models.User{}, &models.Company{}, &models.Role{}, &models.Building{}, &models.Floor{}, &models.Room{}, &models.Lock{}, &models.KeyCopy{}, &models.Employee{}, &models.KeyCopyAssignment{})
+
+	seedRoles(DB) // Seed roles
+	seedSuperAdmin(DB)
+}
+
+// CloseDB closes the database connection
+func CloseDB() {
+	if err := DB.Close(); err != nil {
+		log.Println("Error closing the database connection:", err)
+	}
 }
 
 func InitJWTSecret() string {

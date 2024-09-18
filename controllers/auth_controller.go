@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"st-portier-be/config"
 	"st-portier-be/models"
+	"st-portier-be/services"
 	"st-portier-be/utils"
 
 	"github.com/gin-gonic/gin"
@@ -25,7 +26,7 @@ func Register(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	var user models.User
+	var user *models.User
 	var input struct {
 		Username string `json:"username"`
 		Password string `json:"password"`
@@ -36,14 +37,15 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	if err := config.DB.Where("username = ?", input.Username).First(&user).Error; err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+	user, err := services.GetUserByUsername(input.Username)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
 		return
 	}
 
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
 		return
 	}
 
