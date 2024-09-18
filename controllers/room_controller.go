@@ -34,8 +34,8 @@ func CreateRoom(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Room created successfully", "data": input})
 }
 
-// GetRoomByID retrieves a room by its ID, with access control based on the user's company
-func GetRoomByID(c *gin.Context) {
+// GetRoom retrieves a room by its ID, with access control based on the user's company
+func GetRoom(c *gin.Context) {
 	user, _ := c.Get("user")
 	roomID, _ := strconv.Atoi(c.Param("id"))
 

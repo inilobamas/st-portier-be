@@ -44,9 +44,17 @@ func InitRoutes() *gin.Engine {
 		// Floors CRUD routes
 		authorized.POST("/floors", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.CreateFloor)
 		authorized.GET("/floors/:id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID), controllers.GetFloor)
-		authorized.GET("/floors", middleware.RequireRole(models.SuperAdminRoleID), controllers.GetFloors)
+		authorized.GET("/floors", middleware.RequireRole(models.SuperAdminRoleID), controllers.GetFloorsByCompany)
+		authorized.GET("/floors/:floor_id/rooms", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID, models.SuperAdminRoleID), controllers.GetRoomsByFloorID)
 		authorized.PUT("/floors/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateFloor)
 		authorized.DELETE("/floors/:id", middleware.RequireRole(models.SuperAdminRoleID), controllers.DeleteFloor)
+
+		// Rooms CRUD routes
+		authorized.POST("/rooms", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.CreateRoom)
+		authorized.GET("/rooms/:id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID), controllers.GetRoom)
+		authorized.GET("/rooms", middleware.RequireRole(models.SuperAdminRoleID), controllers.GetRoomsByCompany)
+		authorized.PUT("/rooms/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateRoom)
+		authorized.DELETE("/rooms/:id", middleware.RequireRole(models.SuperAdminRoleID), controllers.DeleteRoom)
 	}
 
 	return r
