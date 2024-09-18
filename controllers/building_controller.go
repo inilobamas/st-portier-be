@@ -54,9 +54,7 @@ func GetBuildings(c *gin.Context) {
 // GetBuilding allows Admin and Normal User to view their company, Super Admin can view any company
 func GetBuilding(c *gin.Context) {
 	user, _ := c.Get("user")
-	strBuildingID := c.Param("id")
-
-	buildingID, _ := strconv.Atoi(strBuildingID)
+	buildingID, _ := strconv.Atoi(c.Param("id"))
 
 	var building *models.Building
 	var err error
@@ -80,9 +78,7 @@ func GetBuilding(c *gin.Context) {
 // UpdateBuilding allows Admin or Super Admin to update a building
 func UpdateBuilding(c *gin.Context) {
 	user, _ := c.Get("user")
-	strBuildingID := c.Param("id")
-
-	buildingID, _ := strconv.Atoi(strBuildingID)
+	buildingID, _ := strconv.Atoi(c.Param("id"))
 
 	// Only Admin or Super Admin can update buildings
 	if user.(models.User).RoleID != models.SuperAdminRoleID && user.(models.User).RoleID != models.AdminRoleID {
@@ -108,9 +104,7 @@ func UpdateBuilding(c *gin.Context) {
 // DeleteBuilding allows Super Admin to delete a building
 func DeleteBuilding(c *gin.Context) {
 	user, _ := c.Get("user")
-	strBuildingID := c.Param("id")
-
-	buildingID, _ := strconv.Atoi(strBuildingID)
+	buildingID, _ := strconv.Atoi(c.Param("id"))
 
 	// Only Super Admin can delete buildings
 	if user.(models.User).RoleID != models.SuperAdminRoleID {

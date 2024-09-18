@@ -24,9 +24,7 @@ func GetCompanies(c *gin.Context) {
 // GetCompany allows Admin and Normal User to view their company, Super Admin can view any company
 func GetCompany(c *gin.Context) {
 	user, _ := c.Get("user")
-	strCompanyID := c.Param("id")
-
-	companyID, _ := strconv.Atoi(strCompanyID)
+	companyID, _ := strconv.Atoi(c.Param("id"))
 
 	var company *models.Company
 	var err error
@@ -75,9 +73,7 @@ func CreateCompany(c *gin.Context) {
 // UpdateCompany allows Admin to update their company, Super Admin can update any company
 func UpdateCompany(c *gin.Context) {
 	user, _ := c.Get("user")
-	strCompanyID := c.Param("id")
-
-	companyID, _ := strconv.Atoi(strCompanyID)
+	companyID, _ := strconv.Atoi(c.Param("id"))
 
 	var input models.Company
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -108,9 +104,7 @@ func UpdateCompany(c *gin.Context) {
 // DeleteCompany allows only Super Admin to delete a company
 func DeleteCompany(c *gin.Context) {
 	user, _ := c.Get("user")
-	strCompanyID := c.Param("id")
-
-	companyID, _ := strconv.Atoi(strCompanyID)
+	companyID, _ := strconv.Atoi(c.Param("id"))
 
 	// Only Super Admin can delete companies
 	if user.(models.User).RoleID != models.SuperAdminRoleID {

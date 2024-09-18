@@ -44,10 +44,8 @@ func GetUsers(c *gin.Context) {
 // Get single user by ID
 func GetUser(c *gin.Context) {
 	user, _ := c.Get("user") // Get the currently logged-in user
-	strUserID := c.Param("id")
+	userID, _ := strconv.Atoi(c.Param("id"))
 	roleID := user.(models.User).RoleID
-
-	userID, _ := strconv.Atoi(strUserID)
 
 	// Fetch the user by ID
 	fetchedUser, err := services.GetUserByID(userID)
@@ -100,9 +98,7 @@ func CreateUser(c *gin.Context) {
 func UpdateUser(c *gin.Context) {
 	var input models.User
 	user, _ := c.Get("user") // Get the currently logged-in user
-	strUserID := c.Param("id")
-
-	userID, _ := strconv.Atoi(strUserID)
+	userID, _ := strconv.Atoi(c.Param("id"))
 
 	// Bind the JSON input to the user model
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -154,9 +150,7 @@ func UpdateUser(c *gin.Context) {
 // Delete user
 func DeleteUser(c *gin.Context) {
 	user, _ := c.Get("user") // Get the currently logged-in user
-	strUserID := c.Param("id")
-
-	userID, _ := strconv.Atoi(strUserID)
+	userID, _ := strconv.Atoi(c.Param("id"))
 
 	// Fetch the user by ID
 	fetchedUser, err := services.GetUserByID(userID)
