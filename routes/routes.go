@@ -73,7 +73,7 @@ func InitRoutes(r *gin.Engine) {
 
 		// Employee CRUD routes #TODO: Get Employee by Company ID
 		authorized.POST("/employees", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.CreateEmployee)
-		authorized.GET("/employees", middleware.RequireRole(models.SuperAdminRoleID, models.AdminRoleID), controllers.GetAllEmployeesByCompany)
+		authorized.GET("/employees", middleware.RequireRole(models.SuperAdminRoleID, models.AdminRoleID), controllers.GetAllEmployees)
 		authorized.GET("/employees/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.GetEmployeeByID)
 		authorized.PUT("/employees/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateEmployee)
 		authorized.DELETE("/employees/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.DeleteEmployee)
