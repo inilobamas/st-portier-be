@@ -62,8 +62,16 @@ func InitRoutes() *gin.Engine {
 		authorized.POST("/locks", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.CreateLock)
 		authorized.GET("/locks/:id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID), controllers.GetLock)
 		authorized.GET("/locks", middleware.RequireRole(models.SuperAdminRoleID), controllers.GetAllLocks)
+		authorized.GET("/locks/:lock_id/key_copies", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID, models.SuperAdminRoleID), controllers.GetKeyCopiesByLockID)
 		authorized.PUT("/locks/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateLock)
 		authorized.DELETE("/locks/:id", middleware.RequireRole(models.SuperAdminRoleID), controllers.DeleteLock)
+
+		// Key-Copy CRUD routes
+		authorized.POST("/key_copies", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.CreateKeyCopy)
+		authorized.GET("/key_copies/:id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID), controllers.GetKeyCopy)
+		authorized.GET("/key_copies", middleware.RequireRole(models.SuperAdminRoleID), controllers.GetAllKeyCopies)
+		authorized.PUT("/key_copies/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateKeyCopy)
+		authorized.DELETE("/key_copies/:id", middleware.RequireRole(models.SuperAdminRoleID), controllers.DeleteKeyCopy)
 	}
 
 	return r
