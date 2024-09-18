@@ -23,8 +23,8 @@ func GetAllFloorsByBuilding(buildingID int) ([]models.Floor, error) {
 	return floors, nil
 }
 
-// GetAllFloorsByCompany get all floors for a given building
-func GetAllFloorsByCompany(companyID int) ([]models.Floor, error) {
+// GetFloorsByCompanyID get all floors for a given building
+func GetFloorsByCompanyID(companyID int) ([]models.Floor, error) {
 	var floors []models.Floor
 	if err := config.DB.Where("company_id = ?", companyID).Find(&floors).Error; err != nil {
 		return nil, err

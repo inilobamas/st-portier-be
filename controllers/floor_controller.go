@@ -40,12 +40,12 @@ func CreateFloor(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Floor created successfully", "data": input})
 }
 
-// GetFloors allows Admin and Normal User to view all floors for their company
-func GetFloors(c *gin.Context) {
+// GetFloorsByCompany allows Admin and Normal User to view all floors for their company
+func GetFloorsByCompany(c *gin.Context) {
 	user, _ := c.Get("user")
 
 	// Get all floors for the user's company
-	floors, err := services.GetAllFloorsByCompany(user.(models.User).CompanyID)
+	floors, err := services.GetFloorsByCompanyID(user.(models.User).CompanyID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to Get floors"})
 		return
