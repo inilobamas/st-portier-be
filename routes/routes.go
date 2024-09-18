@@ -23,6 +23,13 @@ func InitRoutes() *gin.Engine {
 		authorized.POST("/users", controllers.CreateUser)
 		authorized.PUT("/users/:id", controllers.UpdateUser)
 		authorized.DELETE("/users/:id", controllers.DeleteUser)
+
+		// Companies
+		authorized.GET("/companies", controllers.GetCompanies)
+		authorized.GET("/companies/:id", controllers.GetCompany)
+		authorized.POST("/companies", controllers.CreateCompany)
+		authorized.PUT("/companies/:id", controllers.UpdateCompany)
+		authorized.DELETE("/companies/:id", controllers.DeleteCompany)
 	}
 
 	return r
