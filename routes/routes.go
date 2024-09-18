@@ -72,6 +72,13 @@ func InitRoutes() *gin.Engine {
 		authorized.GET("/key_copies", middleware.RequireRole(models.SuperAdminRoleID), controllers.GetAllKeyCopies)
 		authorized.PUT("/key_copies/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateKeyCopy)
 		authorized.DELETE("/key_copies/:id", middleware.RequireRole(models.SuperAdminRoleID), controllers.DeleteKeyCopy)
+
+		// Employee CRUD routes
+		authorized.POST("/employees", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.CreateEmployee)
+		authorized.GET("/employees", middleware.RequireRole(models.AdminRoleID), controllers.GetAllEmployeesByCompany)
+		authorized.GET("/employees/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.GetEmployeeByID)
+		authorized.PUT("/employees/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateEmployee)
+		authorized.DELETE("/employees/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.DeleteEmployee)
 	}
 
 	return r
