@@ -1,0 +1,422 @@
+[
+    {
+        "Company": {
+            "CreateCompany": {
+                "method": "POST",
+                "url": "/companies",
+                "body": {
+                    "name": "string",
+                    "address": "string"
+                },
+                "response": {
+                    "company_id": "integer",
+                    "name": "string",
+                    "address": "string"
+                }
+            },
+            "GetCompany": {
+                "method": "GET",
+                "url": "/companies/{company_id}",
+                "response": {
+                    "company_id": "integer",
+                    "name": "string",
+                    "address": "string"
+                }
+            },
+            "UpdateCompany": {
+                "method": "PUT",
+                "url": "/companies/{company_id}",
+                "body": {
+                    "name": "string",
+                    "address": "string"
+                },
+                "response": {
+                    "company_id": "integer",
+                    "name": "string",
+                    "address": "string"
+                }
+            },
+            "DeleteCompany": {
+                "method": "DELETE",
+                "url": "/companies/{company_id}",
+                "response": {
+                    "message": "Company deleted"
+                }
+            }
+        }
+    },
+    {
+        "User": {
+            "CreateUser": {
+                "method": "POST",
+                "url": "/users",
+                "body": {
+                    "name": "string",
+                    "email": "string",
+                    "role": "string",
+                    "password": "string",
+                    "company_id": "integer"
+                },
+                "response": {
+                    "user_id": "integer",
+                    "name": "string",
+                    "email": "string",
+                    "role": "string",
+                    "company_id": "integer"
+                }
+            },
+            "GetUser": {
+                "method": "GET",
+                "url": "/users/{user_id}",
+                "response": {
+                    "user_id": "integer",
+                    "name": "string",
+                    "email": "string",
+                    "role": "string",
+                    "company_id": "integer"
+                }
+            },
+            "UpdateUser": {
+                "method": "PUT",
+                "url": "/users/{user_id}",
+                "body": {
+                    "name": "string",
+                    "email": "string",
+                    "role": "string"
+                },
+                "response": {
+                    "user_id": "integer",
+                    "name": "string",
+                    "email": "string",
+                    "role": "string"
+                }
+            },
+            "DeleteUser": {
+                "method": "DELETE",
+                "url": "/users/{user_id}",
+                "response": {
+                    "message": "User deleted"
+                }
+            }
+        }
+    },
+    {
+        "Employee": {
+            "CreateEmployee": {
+                "method": "POST",
+                "url": "/employees",
+                "body": {
+                    "name": "string",
+                    "email": "string",
+                    "company_id": "integer"
+                },
+                "response": {
+                    "employee_id": "integer",
+                    "name": "string",
+                    "email": "string",
+                    "company_id": "integer"
+                }
+            },
+            "GetEmployee": {
+                "method": "GET",
+                "url": "/employees/{employee_id}",
+                "response": {
+                    "employee_id": "integer",
+                    "name": "string",
+                    "email": "string",
+                    "company_id": "integer"
+                }
+            },
+            "UpdateEmployee": {
+                "method": "PUT",
+                "url": "/employees/{employee_id}",
+                "body": {
+                    "name": "string",
+                    "email": "string"
+                },
+                "response": {
+                    "employee_id": "integer",
+                    "name": "string",
+                    "email": "string"
+                }
+            },
+            "DeleteEmployee": {
+                "method": "DELETE",
+                "url": "/employees/{employee_id}",
+                "response": {
+                    "message": "Employee deleted"
+                }
+            }
+        }
+    },
+    {
+        "Building": {
+            "CreateBuilding": {
+                "method": "POST",
+                "url": "/buildings",
+                "body": {
+                    "name": "string",
+                    "company_id": "integer"
+                },
+                "response": {
+                    "building_id": "integer",
+                    "name": "string",
+                    "company_id": "integer"
+                }
+            },
+            "GetBuilding": {
+                "method": "GET",
+                "url": "/buildings/{building_id}",
+                "response": {
+                    "building_id": "integer",
+                    "name": "string",
+                    "company_id": "integer"
+                }
+            },
+            "UpdateBuilding": {
+                "method": "PUT",
+                "url": "/buildings/{building_id}",
+                "body": {
+                    "name": "string"
+                },
+                "response": {
+                    "building_id": "integer",
+                    "name": "string"
+                }
+            },
+            "DeleteBuilding": {
+                "method": "DELETE",
+                "url": "/buildings/{building_id}",
+                "response": {
+                    "message": "Building deleted"
+                }
+            }
+        }
+    },
+    {
+        "Floor": {
+            "CreateFloor": {
+                "method": "POST",
+                "url": "/floors",
+                "body": {
+                    "name": "string",
+                    "building_id": "integer"
+                },
+                "response": {
+                    "floor_id": "integer",
+                    "name": "string",
+                    "building_id": "integer"
+                }
+            },
+            "GetFloor": {
+                "method": "GET",
+                "url": "/floors/{floor_id}",
+                "response": {
+                    "floor_id": "integer",
+                    "name": "string",
+                    "building_id": "integer"
+                }
+            },
+            "UpdateFloor": {
+                "method": "PUT",
+                "url": "/floors/{floor_id}",
+                "body": {
+                    "name": "string"
+                },
+                "response": {
+                    "floor_id": "integer",
+                    "name": "string"
+                }
+            },
+            "DeleteFloor": {
+                "method": "DELETE",
+                "url": "/floors/{floor_id}",
+                "response": {
+                    "message": "Floor deleted"
+                }
+            }
+        }
+    },
+    {
+        "Room": {
+            "CreateRoom": {
+                "method": "POST",
+                "url": "/rooms",
+                "body": {
+                    "name": "string",
+                    "building_id": "integer"
+                },
+                "response": {
+                    "floor_id": "integer",
+                    "name": "string",
+                    "building_id": "integer"
+                }
+            },
+            "GetRoom": {
+                "method": "GET",
+                "url": "/rooms/{room_id}",
+                "response": {
+                    "room_id": "integer",
+                    "name": "string",
+                    "building_id": "integer"
+                }
+            },
+            "UpdateRoom": {
+                "method": "PUT",
+                "url": "/rooms/{room_id}",
+                "body": {
+                    "name": "string"
+                },
+                "response": {
+                    "room_id": "integer",
+                    "name": "string"
+                }
+            },
+            "DeleteRoom": {
+                "method": "DELETE",
+                "url": "/rooms/{room_id}",
+                "response": {
+                    "message": "Room deleted"
+                }
+            }
+        }
+    },
+    {
+        "Lock": {
+            "CreateLock": {
+                "method": "POST",
+                "url": "/locks",
+                "body": {
+                    "name": "string",
+                    "building_id": "integer"
+                },
+                "response": {
+                    "floor_id": "integer",
+                    "name": "string",
+                    "building_id": "integer"
+                }
+            },
+            "GetLock": {
+                "method": "GET",
+                "url": "/locks/{lock_id}",
+                "response": {
+                    "lock_id": "integer",
+                    "name": "string",
+                    "building_id": "integer"
+                }
+            },
+            "UpdateLock": {
+                "method": "PUT",
+                "url": "/locks/{lock_id}",
+                "body": {
+                    "name": "string"
+                },
+                "response": {
+                    "lock_id": "integer",
+                    "name": "string"
+                }
+            },
+            "DeleteLock": {
+                "method": "DELETE",
+                "url": "/locks/{lock_id}",
+                "response": {
+                    "message": "Lock deleted"
+                }
+            }
+        }
+    },
+    {
+        "KeyCopies": {
+            "CreateKeyCopies": {
+                "method": "POST",
+                "url": "/key_copies",
+                "body": {
+                    "name": "string",
+                    "building_id": "integer"
+                },
+                "response": {
+                    "floor_id": "integer",
+                    "name": "string",
+                    "building_id": "integer"
+                }
+            },
+            "GetKeyCopies": {
+                "method": "GET",
+                "url": "/key_copies/{key_copy_id}",
+                "response": {
+                    "key_copy_id": "integer",
+                    "name": "string",
+                    "building_id": "integer"
+                }
+            },
+            "UpdateKeyCopies": {
+                "method": "PUT",
+                "url": "/key_copies/{key_copy_id}",
+                "body": {
+                    "name": "string"
+                },
+                "response": {
+                    "key_copy_id": "integer",
+                    "name": "string"
+                }
+            },
+            "DeleteKeyCopies": {
+                "method": "DELETE",
+                "url": "/key_copies/{key_copy_id}",
+                "response": {
+                    "message": "KeyCopies deleted"
+                }
+            }
+        }
+    },
+    {
+        "KeyCopyAssignment": {
+            "AssignKeyCopy": {
+                "method": "POST",
+                "url": "/key-copies/assign",
+                "body": {
+                    "key_copy_id": "integer",
+                    "employee_id": "integer"
+                },
+                "response": {
+                    "assignment_id": "integer",
+                    "key_copy_id": "integer",
+                    "employee_id": "integer",
+                    "assigned_at": "datetime"
+                }
+            },
+            "RevokeKeyCopy": {
+                "method": "POST",
+                "url": "/key-copies/revoke",
+                "body": {
+                    "key_copy_id": "integer",
+                    "employee_id": "integer"
+                },
+                "response": {
+                    "message": "Key copy revoked"
+                }
+            }
+        }
+    },
+    {
+        "GlobalSearch": {
+            "Search": {
+                "method": "GET",
+                "url": "/search",
+                "query_params": {
+                    "q": "string"
+                },
+                "response": {
+                    "results": [
+                        {
+                            "type": "string",
+                            "id": "integer",
+                            "name": "string",
+                            "company_id": "integer"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+]
