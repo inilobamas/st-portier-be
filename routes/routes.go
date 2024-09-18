@@ -3,6 +3,7 @@ package routes
 import (
 	"st-portier-be/controllers"
 	"st-portier-be/middleware"
+	"st-portier-be/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,19 +18,13 @@ func InitRoutes() *gin.Engine {
 	authorized := r.Group("/")
 	authorized.Use(middleware.AuthMiddleware())
 	{
-		// Users
-		authorized.GET("/users", controllers.GetUsers)
-		authorized.GET("/users/:id", controllers.GetUser)
-		authorized.POST("/users", controllers.CreateUser)
-		authorized.PUT("/users/:id", controllers.UpdateUser)
-		authorized.DELETE("/users/:id", controllers.DeleteUser)
 
-		// Companies
-		authorized.GET("/companies", controllers.GetCompanies)
-		authorized.GET("/companies/:id", controllers.GetCompany)
-		authorized.POST("/companies", controllers.CreateCompany)
-		authorized.PUT("/companies/:id", controllers.UpdateCompany)
-		authorized.DELETE("/companies/:id", controllers.DeleteCompany)
+		// User CRUD routes
+		authorized.POST("/users", middleware.RequireRole(models.SuperAdminRoleID, models.AdminRoleID), controllers.CreateUser)
+		authorized.GET("/users/:id", middleware.RequireRole(models.SuperAdminRoleID, models.AdminRoleID, models.NormalUserRoleID), controllers.GetUser)
+		authorized.GET("/users", middleware.RequireRole(models.SuperAdminRoleID, models.AdminRoleID, models.NormalUserRoleID), controllers.GetUsers)
+		authorized.PUT("/users/:id", middleware.RequireRole(models.SuperAdminRoleID, models.AdminRoleID, models.NormalUserRoleID), controllers.UpdateUser)
+		authorized.DELETE("/users/:id", middleware.RequireRole(models.SuperAdminRoleID, models.AdminRoleID), controllers.DeleteUser)
 	}
 
 	return r
