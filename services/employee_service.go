@@ -54,6 +54,7 @@ func UpdateEmployee(employeeID int, updatedEmployee *models.Employee) error {
 	employee.Name = updatedEmployee.Name
 	employee.Email = updatedEmployee.Email
 	employee.Phone = updatedEmployee.Phone
+	employee.CompanyID = updatedEmployee.CompanyID
 
 	// Save the updated employee
 	if err := config.DB.Save(&employee).Error; err != nil {

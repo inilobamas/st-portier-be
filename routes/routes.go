@@ -8,8 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitRoutes() *gin.Engine {
-	r := gin.Default()
+func InitRoutes(r *gin.Engine) {
 
 	// Authentication
 	r.POST("/login", controllers.Login)
@@ -74,7 +73,7 @@ func InitRoutes() *gin.Engine {
 
 		// Employee CRUD routes #TODO: Get Employee by Company ID
 		authorized.POST("/employees", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.CreateEmployee)
-		authorized.GET("/employees", middleware.RequireRole(models.AdminRoleID), controllers.GetAllEmployeesByCompany)
+		authorized.GET("/employees", middleware.RequireRole(models.SuperAdminRoleID, models.AdminRoleID), controllers.GetAllEmployeesByCompany)
 		authorized.GET("/employees/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.GetEmployeeByID)
 		authorized.PUT("/employees/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateEmployee)
 		authorized.DELETE("/employees/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.DeleteEmployee)
@@ -84,6 +83,4 @@ func InitRoutes() *gin.Engine {
 		authorized.POST("/employees/revoke/:employee_id/:key_copy_id", middleware.RequireRole(models.NormalUserRoleID, models.AdminRoleID, models.SuperAdminRoleID), controllers.RevokeKeyCopy)
 		authorized.GET("/employees/key-copies/:employee_id", middleware.RequireRole(models.NormalUserRoleID, models.AdminRoleID, models.SuperAdminRoleID), controllers.GetAssignedKeys)
 	}
-
-	return r
 }
