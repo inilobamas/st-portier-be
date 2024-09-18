@@ -37,8 +37,20 @@ func CreateBuilding(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Building created successfully", "data": input})
 }
 
-// GetBuildings allows Admin and Normal User to view all buildings for their company
-func GetBuildings(c *gin.Context) {
+// GetAllBuildings fetches all rooms for Super Admin
+func GetAllBuildings(c *gin.Context) {
+	// Fetch all building without restriction (Super Admin access)
+	buildings, err := services.GetAllBuildings()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch buildings"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": buildings})
+}
+
+// GetBuildingsByCompany allows Admin and Normal User to view all buildings for their company
+func GetBuildingsByCompany(c *gin.Context) {
 	user, _ := c.Get("user")
 
 	// Get all buildings for the user's company

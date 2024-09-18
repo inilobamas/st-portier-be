@@ -41,6 +41,15 @@ func GetBuildingByID(buildingID int) (*models.Building, error) {
 	return &building, nil
 }
 
+// GetAllBuildings get all rooms across all floors (for Super Admin)
+func GetAllBuildings() ([]models.Building, error) {
+	var buildings []models.Building
+	if err := config.DB.Find(&buildings).Error; err != nil {
+		return nil, err
+	}
+	return buildings, nil
+}
+
 // UpdateBuilding updates the building's details in the database
 func UpdateBuilding(buildingID int, updatedBuilding *models.Building) error {
 	var building models.Building

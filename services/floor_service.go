@@ -14,6 +14,15 @@ func CreateFloor(floor *models.Floor) error {
 	return nil
 }
 
+// GetAllFloors get all rooms across all floors (for Super Admin)
+func GetAllFloors() ([]models.Floor, error) {
+	var floors []models.Floor
+	if err := config.DB.Preload("Building").Find(&floors).Error; err != nil {
+		return nil, err
+	}
+	return floors, nil
+}
+
 // GetAllFloorsByBuilding get all floors for a given building
 func GetAllFloorsByBuilding(buildingID int) ([]models.Floor, error) {
 	var floors []models.Floor
@@ -62,6 +71,7 @@ func UpdateFloor(floorID int, updatedFloor *models.Floor) error {
 	// Update the floor details
 	floor.Name = updatedFloor.Name
 	floor.Number = updatedFloor.Number
+	floor.BuildingID = updatedFloor.BuildingID
 
 	// Save the updated floor
 	if err := config.DB.Save(&floor).Error; err != nil {

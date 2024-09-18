@@ -40,6 +40,18 @@ func CreateFloor(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Floor created successfully", "data": input})
 }
 
+// GetAllFloors fetches all rooms for Super Admin
+func GetAllFloors(c *gin.Context) {
+	// Fetch all rooms without restriction (Super Admin access)
+	locks, err := services.GetAllFloors()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch locks"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": locks})
+}
+
 // GetFloorsByCompany allows Admin and Normal User to view all floors for their company
 func GetFloorsByCompany(c *gin.Context) {
 	user, _ := c.Get("user")

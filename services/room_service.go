@@ -44,7 +44,7 @@ func GetAllRoomsByFloor(floorID int) ([]models.Room, error) {
 // GetRoomByID get a room by its ID
 func GetRoomByID(roomID int) (*models.Room, error) {
 	var room models.Room
-	if err := config.DB.First(&room, roomID).Error; err != nil {
+	if err := config.DB.Preload("Room.Floor.Building").First(&room, roomID).Error; err != nil {
 		return nil, err
 	}
 	return &room, nil
@@ -62,6 +62,7 @@ func UpdateRoom(roomID int, updatedRoom *models.Room) error {
 	// Update the room details
 	room.Name = updatedRoom.Name
 	room.Number = updatedRoom.Number
+	room.FloorID = updatedRoom.FloorID
 
 	// Save the updated room
 	if err := config.DB.Save(&room).Error; err != nil {
