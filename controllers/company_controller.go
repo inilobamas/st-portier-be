@@ -2,90 +2,126 @@ package controllers
 
 import (
 	"net/http"
-	"st-portier-be/config"
 	"st-portier-be/models"
+	"st-portier-be/services"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 // Get all companies
 func GetCompanies(c *gin.Context) {
-	var companies []models.Company
-	config.DB.Find(&companies)
+	// Call the service to get all companies
+	companies, err := services.GetAllCompanies()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch companies"})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"data": companies})
 }
 
-// Get single company by ID
+// GetCompany allows Admin and Normal User to view their company, Super Admin can view any company
 func GetCompany(c *gin.Context) {
-	var company models.Company
-	id := c.Param("id")
+	user, _ := c.Get("user")
+	strCompanyID := c.Param("id")
 
-	if err := config.DB.First(&company, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Company not found!"})
+	companyID, _ := strconv.Atoi(strCompanyID)
+
+	var company *models.Company
+	var err error
+
+	// Super Admin can view any company
+	if user.(models.User).RoleID == models.SuperAdminRoleID {
+		company, err = services.GetCompanyByID(companyID)
+	} else {
+		// Admin and Normal User can only view their own company
+		company, err = services.GetCompanyByIDAndUserCompany(user.(models.User).CompanyID, companyID)
+	}
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Company not found"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": company})
 }
 
-// Create new company
+// CreateCompany allows Super Admin to create a new company
 func CreateCompany(c *gin.Context) {
-	var input struct {
-		Name        string `json:"name" binding:"required"`
-		Description string `json:"description"`
+	user, _ := c.Get("user")
+
+	// Only Super Admin can create companies
+	if user.(models.User).RoleID != models.SuperAdminRoleID {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+		return
 	}
 
+	var input models.Company
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	company := models.Company{
-		Name:        input.Name,
-		Description: input.Description,
+	// Call the service to create a new company
+	if err := services.CreateCompany(&input); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to create company"})
+		return
 	}
-	config.DB.Create(&company)
 
-	c.JSON(http.StatusOK, gin.H{"data": company})
+	c.JSON(http.StatusOK, gin.H{"message": "Company created successfully", "data": input})
 }
 
-// Update company
+// UpdateCompany allows Admin to update their company, Super Admin can update any company
 func UpdateCompany(c *gin.Context) {
-	var company models.Company
-	id := c.Param("id")
+	user, _ := c.Get("user")
+	strCompanyID := c.Param("id")
 
-	if err := config.DB.First(&company, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Company not found!"})
-		return
-	}
+	companyID, _ := strconv.Atoi(strCompanyID)
 
-	var input struct {
-		Name        string `json:"name"`
-		Description string `json:"description"`
-	}
-
+	var input models.Company
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	company.Name = input.Name
-	company.Description = input.Description
-
-	config.DB.Save(&company)
-	c.JSON(http.StatusOK, gin.H{"data": company})
-}
-
-// Delete company
-func DeleteCompany(c *gin.Context) {
-	var company models.Company
-	id := c.Param("id")
-
-	if err := config.DB.First(&company, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Company not found!"})
+	var err error
+	if user.(models.User).RoleID == models.SuperAdminRoleID {
+		// Super Admin can update any company
+		err = services.UpdateCompany(companyID, &input)
+	} else if user.(models.User).RoleID == models.AdminRoleID && user.(models.User).CompanyID == companyID {
+		// Admin can update only their own company
+		err = services.UpdateCompany(companyID, &input)
+	} else {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
 		return
 	}
 
-	config.DB.Delete(&company)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to update company"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Company updated successfully", "data": input})
+}
+
+// DeleteCompany allows only Super Admin to delete a company
+func DeleteCompany(c *gin.Context) {
+	user, _ := c.Get("user")
+	strCompanyID := c.Param("id")
+
+	companyID, _ := strconv.Atoi(strCompanyID)
+
+	// Only Super Admin can delete companies
+	if user.(models.User).RoleID != models.SuperAdminRoleID {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+		return
+	}
+
+	if err := services.DeleteCompany(companyID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to delete company"})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{"message": "Company deleted successfully"})
 }

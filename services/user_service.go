@@ -34,7 +34,7 @@ func GetUserByID(userID int) (*models.User, error) {
 }
 
 // FetchAllUsers fetches all users (Super Admin access)
-func FetchAllUsers() ([]models.User, error) {
+func GetAllUsers() ([]models.User, error) {
 	var users []models.User
 	if err := config.DB.Preload("Company").Find(&users).Error; err != nil {
 		return nil, err
@@ -42,8 +42,8 @@ func FetchAllUsers() ([]models.User, error) {
 	return users, nil
 }
 
-// FetchUsersByCompany fetches all users for a specific company (Admin and Normal User access)
-func FetchUsersByCompany(companyID int) ([]models.User, error) {
+// GetUsersByCompany get all users for a specific company (Admin and Normal User access)
+func GetUsersByCompany(companyID int) ([]models.User, error) {
 	var users []models.User
 	if err := config.DB.Where("company_id = ?", companyID).Preload("Company").Find(&users).Error; err != nil {
 		return nil, err

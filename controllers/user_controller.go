@@ -23,10 +23,10 @@ func GetUsers(c *gin.Context) {
 	switch roleID {
 	case models.SuperAdminRoleID:
 		// Super Admin can access all users across all companies
-		users, err = services.FetchAllUsers()
+		users, err = services.GetAllUsers()
 	case models.AdminRoleID, models.NormalUserRoleID:
 		// Admin and Normal User can only access users within their company
-		users, err = services.FetchUsersByCompany(companyID)
+		users, err = services.GetUsersByCompany(companyID)
 	default:
 		// If no permissions, return access denied
 		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
@@ -34,7 +34,7 @@ func GetUsers(c *gin.Context) {
 	}
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch users"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to get users"})
 		return
 	}
 
