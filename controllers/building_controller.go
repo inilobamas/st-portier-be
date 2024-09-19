@@ -42,9 +42,8 @@ func CreateBuilding(c *gin.Context) {
 // GetAllBuildings fetches all rooms for Super Admin
 func GetAllBuildings(c *gin.Context) {
 	user, _ := c.Get("user")
-	buildingID, _ := strconv.Atoi(c.Param("id"))
 
-	var buildings *models.Building[]
+	var buildings []models.Building
 	var err error
 
 	// Super Admin can view any company
@@ -52,14 +51,13 @@ func GetAllBuildings(c *gin.Context) {
 		buildings, err = services.GetAllBuildings()
 	} else {
 		// Admin and Normal User can only view their own company
-		buildings, err = services.GetAllBuildingsByCompany(user.(models.User).CompanyID, buildingID)
+		buildings, err = services.GetAllBuildingsByCompany(user.(models.User).CompanyID)
 	}
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Building not found"})
 		return
 	}
-
 
 	c.JSON(http.StatusOK, gin.H{"data": buildings})
 }
