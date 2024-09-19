@@ -44,7 +44,7 @@ func GetAllRoomsByFloor(floorID int) ([]models.Room, error) {
 // GetRoomByID get a room by its ID
 func GetRoomByID(roomID int) (*models.Room, error) {
 	var room models.Room
-	if err := config.DB.Preload("Room.Floor.Building").First(&room, roomID).Error; err != nil {
+	if err := config.DB.Preload("Floor.Building").Where("id = ?", roomID).First(&room, roomID).Error; err != nil {
 		return nil, err
 	}
 	return &room, nil

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"st-portier-be/models"
 	"st-portier-be/services"
@@ -13,8 +14,10 @@ import (
 func CreateRoom(c *gin.Context) {
 	user, _ := c.Get("user")
 
+	roleID := user.(models.User).RoleID
+
 	// Only Admin or Super Admin can create rooms
-	if user.(models.User).RoleID != models.SuperAdminRoleID && user.(models.User).RoleID != models.AdminRoleID {
+	if roleID != models.SuperAdminRoleID && roleID != models.AdminRoleID {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
 		return
 	}
@@ -22,6 +25,14 @@ func CreateRoom(c *gin.Context) {
 	var input models.Room
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	fmt.Println("input", input)
+
+	// Fetch the floor to ensure it belongs to the user’s company
+	floor, err := services.GetFloorByID(input.FloorID)
+	if err != nil || (roleID == models.AdminRoleID && floor.Building.CompanyID != user.(models.User).CompanyID) {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Floor does not belong to your company"})
 		return
 	}
 
