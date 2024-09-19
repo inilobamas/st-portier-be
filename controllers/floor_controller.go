@@ -12,9 +12,10 @@ import (
 // CreateFloor allows Admin or Super Admin to create a new floor
 func CreateFloor(c *gin.Context) {
 	user, _ := c.Get("user")
+	userRole := user.(models.User).RoleID
 
 	// Only Admin or Super Admin can create floors
-	if userRole := user.(models.User).RoleID; userRole != models.SuperAdminRoleID && userRole != models.AdminRoleID {
+	if userRole != models.SuperAdminRoleID && userRole != models.AdminRoleID {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
 		return
 	}
@@ -25,10 +26,17 @@ func CreateFloor(c *gin.Context) {
 		return
 	}
 
-	// Check if the building belongs to the user's company
-	if building, err := services.GetBuildingByID(int(input.BuildingID)); err != nil || building.CompanyID != user.(models.User).CompanyID {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Building not found or access denied"})
+	building, err := services.GetBuildingByID(int(input.BuildingID))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Unable to find building"})
 		return
+	}
+
+	if userRole == models.AdminRoleID {
+		if building.CompanyID != user.(models.User).CompanyID {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Building not found or access denied"})
+			return
+		}
 	}
 
 	// Call the service to create the floor
@@ -146,9 +154,16 @@ func UpdateFloor(c *gin.Context) {
 		return
 	}
 
-	// Check if the building belongs to the user's company
-	if building, err := services.GetBuildingByID(int(input.BuildingID)); err != nil || building.CompanyID != user.(models.User).CompanyID {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Building not found or access denied"})
+	// Fetch the building details
+	building, err := services.GetBuildingByID(input.BuildingID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Building not found"})
+		return
+	}
+
+	// Check if the user has access to the building
+	if user.(models.User).RoleID != models.SuperAdminRoleID && building.CompanyID != user.(models.User).CompanyID {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
 		return
 	}
 

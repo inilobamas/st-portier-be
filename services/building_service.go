@@ -35,7 +35,7 @@ func GetBuildingByIDAndUserCompany(userCompanyID int, buildingID int) (*models.B
 // GetBuildingByID Get a building by its ID
 func GetBuildingByID(buildingID int) (*models.Building, error) {
 	var building models.Building
-	if err := config.DB.First(&building, buildingID).Error; err != nil {
+	if err := config.DB.First(&building, "id = ?", buildingID).Error; err != nil {
 		return nil, err
 	}
 	return &building, nil
@@ -62,6 +62,7 @@ func UpdateBuilding(buildingID int, updatedBuilding *models.Building) error {
 	// Update the building details
 	building.Name = updatedBuilding.Name
 	building.Address = updatedBuilding.Address
+	building.CompanyID = updatedBuilding.CompanyID
 
 	// Save the updated building
 	if err := config.DB.Save(&building).Error; err != nil {

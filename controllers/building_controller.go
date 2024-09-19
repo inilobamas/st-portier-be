@@ -25,8 +25,10 @@ func CreateBuilding(c *gin.Context) {
 		return
 	}
 
-	// Set the company ID of the building to the logged-in user's company
-	input.CompanyID = user.(models.User).CompanyID
+	if user.(models.User).RoleID != models.SuperAdminRoleID {
+		// Set the company ID of the employee to the logged-in user's company
+		input.CompanyID = user.(models.User).CompanyID
+	}
 
 	// Call the service to create the building
 	if err := services.CreateBuilding(&input); err != nil {
