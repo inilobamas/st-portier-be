@@ -16,7 +16,6 @@ func GetUsers(c *gin.Context) {
 	user, _ := c.Get("user") // Get the currently logged-in user
 	roleID := user.(models.User).RoleID
 	companyID := user.(models.User).CompanyID
-
 	var users []models.User
 	var err error
 

@@ -77,16 +77,26 @@ func GetAllEmployeesByCompany(c *gin.Context) {
 func GetAllEmployees(c *gin.Context) {
 	user, _ := c.Get("user")
 
-	// Only Super Admin can retrieve all employees across all companies
-	if user.(models.User).RoleID != models.SuperAdminRoleID {
+	roleID := user.(models.User).RoleID
+	companyID := user.(models.User).CompanyID
+	var employees []models.Employee
+	var err error
+
+	switch roleID {
+	case models.SuperAdminRoleID:
+		// Super Admin can access all users across all employees
+		employees, err = services.GetAllEmployees()
+	case models.AdminRoleID, models.NormalUserRoleID:
+		// Admin and Normal User can only access users within their company
+		employees, err = services.GetAllEmployeesByCompany(companyID)
+	default:
+		// If no permissions, return access denied
 		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
 		return
 	}
 
-	// Get all employees
-	employees, err := services.GetAllEmployees()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch employees"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to get users"})
 		return
 	}
 

@@ -11,10 +11,27 @@ import (
 
 // Get all companies
 func GetCompanies(c *gin.Context) {
-	// Call the service to get all companies
-	companies, err := services.GetAllCompanies()
+	user, _ := c.Get("user") // Get the currently logged-in user
+	roleID := user.(models.User).RoleID
+	companyID := user.(models.User).CompanyID
+	var companies []models.Company
+	var err error
+
+	switch roleID {
+	case models.SuperAdminRoleID:
+		// Super Admin can access all users across all companies
+		companies, err = services.GetAllCompanies()
+	case models.AdminRoleID, models.NormalUserRoleID:
+		// Admin and Normal User can only access users within their company
+		companies, err = services.GetCompaniesByID(companyID)
+	default:
+		// If no permissions, return access denied
+		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+		return
+	}
+
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch companies"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to get users"})
 		return
 	}
 

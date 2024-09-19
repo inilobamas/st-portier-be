@@ -18,6 +18,15 @@ func GetAllCompanies() ([]models.Company, error) {
 	return companies, nil
 }
 
+// GetCompaniesByID get all users for a specific company (Admin and Normal User access)
+func GetCompaniesByID(companyID int) ([]models.Company, error) {
+	var companies []models.Company
+	if err := config.DB.Where("id = ?", companyID).Find(&companies).Error; err != nil {
+		return nil, err
+	}
+	return companies, nil
+}
+
 // CreateCompany creates a new company in the database
 func CreateCompany(company *models.Company) error {
 	if err := config.DB.Create(&company).Error; err != nil {
