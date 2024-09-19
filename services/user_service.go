@@ -69,6 +69,7 @@ func UpdateUser(userID int, updatedData *models.User) error {
 		}
 		user.Password = string(hashedPassword)
 	}
+	user.CompanyID = updatedData.CompanyID
 	user.RoleID = updatedData.RoleID
 
 	// Save the updated user
