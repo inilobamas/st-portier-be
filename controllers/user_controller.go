@@ -40,6 +40,24 @@ func GetUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": users})
 }
 
+// Get single user by Token
+func GetUserMe(c *gin.Context) {
+	user, _ := c.Get("user") // Get the currently logged-in user
+	userID := user.(models.User).ID
+
+	// Fetch the user by ID
+	fetchedUser, err := services.GetUserByID(int(userID))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{"data": fetchedUser})
+	}
+
+	// If no permissions, return access denied
+	c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+}
+
 // Get single user by ID
 func GetUser(c *gin.Context) {
 	user, _ := c.Get("user") // Get the currently logged-in user
