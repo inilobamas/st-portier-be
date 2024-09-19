@@ -25,7 +25,7 @@ func CreateEmployee(c *gin.Context) {
 		return
 	}
 
-	if user.(models.User).RoleID != models.AdminRoleID {
+	if user.(models.User).RoleID != models.SuperAdminRoleID {
 		// Set the company ID of the employee to the logged-in user's company
 		input.CompanyID = user.(models.User).CompanyID
 	}
