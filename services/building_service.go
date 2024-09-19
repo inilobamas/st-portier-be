@@ -26,7 +26,7 @@ func GetAllBuildingsByCompany(companyID int) ([]models.Building, error) {
 // GetBuildingByIDAndUserCompany retrieves a company by ID if it matches the user's company
 func GetBuildingByIDAndUserCompany(userCompanyID int, buildingID int) (*models.Building, error) {
 	var building models.Building
-	if err := config.DB.Preload("Company").First(&building, "id = ? AND building_id = ?", buildingID, userCompanyID).Error; err != nil {
+	if err := config.DB.Preload("Company").First(&building, "id = ? AND company_id = ?", buildingID, userCompanyID).Error; err != nil {
 		return nil, err
 	}
 	return &building, nil

@@ -44,7 +44,7 @@ func GetFloorsByCompanyID(companyID int) ([]models.Floor, error) {
 // GetFloorByID retrieves a company by its ID
 func GetFloorByID(floorID int) (*models.Floor, error) {
 	var floor models.Floor
-	if err := config.DB.First(&floor, "id = ?", floorID).Error; err != nil {
+	if err := config.DB.Preload("Building").First(&floor, "id = ?", floorID).Error; err != nil {
 		return nil, err
 	}
 	return &floor, nil
