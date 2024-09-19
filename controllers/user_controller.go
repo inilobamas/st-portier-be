@@ -73,9 +73,10 @@ func GetUser(c *gin.Context) {
 // Create new user
 func CreateUser(c *gin.Context) {
 	var input struct {
-		Username string `json:"username" binding:"required"`
-		Password string `json:"password" binding:"required"`
-		Role     string `json:"role" binding:"required"`
+		Username  string `json:"username" binding:"required"`
+		Password  string `json:"password" binding:"required"`
+		RoleID    int    `json:"role_id" binding:"required"`
+		CompanyID int    `json:"company_id" binding:"required"`
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -86,8 +87,10 @@ func CreateUser(c *gin.Context) {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(input.Password), 8)
 
 	user := models.User{
-		Username: input.Username,
-		Password: string(hashedPassword),
+		Username:  input.Username,
+		Password:  string(hashedPassword),
+		RoleID:    input.RoleID,
+		CompanyID: input.CompanyID,
 	}
 	config.DB.Create(&user)
 
