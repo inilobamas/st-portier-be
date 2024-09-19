@@ -17,7 +17,7 @@ func CreateBuilding(building *models.Building) error {
 // GetAllBuildingsByCompany Get all buildings for a given company
 func GetAllBuildingsByCompany(companyID int) ([]models.Building, error) {
 	var buildings []models.Building
-	if err := config.DB.Where("company_id = ?", companyID).Find(&buildings).Error; err != nil {
+	if err := config.DB.Preload("Company").Where("company_id = ?", companyID).Find(&buildings).Error; err != nil {
 		return nil, err
 	}
 	return buildings, nil
@@ -26,7 +26,7 @@ func GetAllBuildingsByCompany(companyID int) ([]models.Building, error) {
 // GetBuildingByIDAndUserCompany retrieves a company by ID if it matches the user's company
 func GetBuildingByIDAndUserCompany(userCompanyID int, buildingID int) (*models.Building, error) {
 	var building models.Building
-	if err := config.DB.First(&building, "id = ? AND building_id = ?", buildingID, userCompanyID).Error; err != nil {
+	if err := config.DB.Preload("Company").First(&building, "id = ? AND building_id = ?", buildingID, userCompanyID).Error; err != nil {
 		return nil, err
 	}
 	return &building, nil
@@ -35,7 +35,7 @@ func GetBuildingByIDAndUserCompany(userCompanyID int, buildingID int) (*models.B
 // GetBuildingByID Get a building by its ID
 func GetBuildingByID(buildingID int) (*models.Building, error) {
 	var building models.Building
-	if err := config.DB.First(&building, "id = ?", buildingID).Error; err != nil {
+	if err := config.DB.Preload("Company").First(&building, "id = ?", buildingID).Error; err != nil {
 		return nil, err
 	}
 	return &building, nil

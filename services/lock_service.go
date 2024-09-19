@@ -15,12 +15,12 @@ func CreateLock(lock *models.Lock) error {
 }
 
 // GetAllLocksByRoomID get all rooms for a specific floor
-func GetAllLocksByRoomID(roomID int) ([]models.Room, error) {
-	var rooms []models.Room
-	if err := config.DB.Where("room_id = ?", roomID).Find(&rooms).Error; err != nil {
+func GetAllLocksByRoomID(roomID int) ([]models.Lock, error) {
+	var locks []models.Lock
+	if err := config.DB.Preload("Room").Where("room_id = ?", roomID).Find(&locks).Error; err != nil {
 		return nil, err
 	}
-	return rooms, nil
+	return locks, nil
 }
 
 // GetAllLocks get all rooms across all floors (for Super Admin)

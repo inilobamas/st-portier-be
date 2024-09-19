@@ -13,8 +13,10 @@ import (
 func CreateLock(c *gin.Context) {
 	user, _ := c.Get("user")
 
+	roleID := user.(models.User).RoleID
+
 	// Only Admin or Super Admin can create locks
-	if user.(models.User).RoleID != models.SuperAdminRoleID && user.(models.User).RoleID != models.AdminRoleID {
+	if roleID != models.SuperAdminRoleID && roleID != models.AdminRoleID {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
 		return
 	}
@@ -27,7 +29,7 @@ func CreateLock(c *gin.Context) {
 
 	// Fetch the room to ensure it belongs to the user’s company
 	room, err := services.GetRoomByID(input.RoomID)
-	if err != nil || room.Floor.Building.CompanyID != user.(models.User).CompanyID {
+	if err != nil || (roleID == models.AdminRoleID && room.Floor.Building.CompanyID != user.(models.User).CompanyID) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Room does not belong to your company"})
 		return
 	}
@@ -112,6 +114,34 @@ func GetLock(c *gin.Context) {
 func GetAllLocks(c *gin.Context) {
 	// Fetch all rooms without restriction (Super Admin access)
 	locks, err := services.GetAllLocks()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch locks"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": locks})
+}
+
+// GetLocksByRoomID retrieves all rooms for a specific floor
+func GetLocksByRoomID(c *gin.Context) {
+	user, _ := c.Get("user")
+	roomID, _ := strconv.Atoi(c.Param("room_id"))
+
+	// Fetch the floor details
+	room, err := services.GetRoomByID(roomID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Floor not found"})
+		return
+	}
+
+	// Check if the user has access to the room
+	if user.(models.User).RoleID != models.SuperAdminRoleID && room.Floor.Building.CompanyID != user.(models.User).CompanyID {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
+		return
+	}
+
+	// Fetch all locks for the specified room
+	locks, err := services.GetAllLocksByRoomID(roomID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch locks"})
 		return

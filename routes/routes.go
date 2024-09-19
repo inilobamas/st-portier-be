@@ -59,7 +59,7 @@ func InitRoutes(r *gin.Engine) {
 		authorized.POST("/locks", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.CreateLock)
 		authorized.GET("/locks/:id", middleware.RequireRole(models.SuperAdminRoleID, models.AdminRoleID, models.NormalUserRoleID), controllers.GetLock)
 		authorized.GET("/locks", middleware.RequireRole(models.SuperAdminRoleID, models.AdminRoleID, models.NormalUserRoleID), controllers.GetAllLocks)
-		authorized.GET("/locks/room/:room_id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID, models.SuperAdminRoleID), controllers.GetRoomsByFloorID)
+		authorized.GET("/locks/room/:room_id", middleware.RequireRole(models.AdminRoleID, models.NormalUserRoleID, models.SuperAdminRoleID), controllers.GetLocksByRoomID)
 		authorized.PUT("/locks/:id", middleware.RequireRole(models.AdminRoleID, models.SuperAdminRoleID), controllers.UpdateLock)
 		authorized.DELETE("/locks/:id", middleware.RequireRole(models.SuperAdminRoleID), controllers.DeleteLock)
 
